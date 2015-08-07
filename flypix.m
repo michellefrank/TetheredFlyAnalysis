@@ -9,15 +9,20 @@ firstframe2load = 1;
 RGBchannel = 1;
 
 % Choose 1 if don't want to see the progress of processing
-quietmode = 0;
-
+quietmode = 1;
 
 %% Load video
 % Specify video name and path
-[filename, path] = uigetfile('*.avi','Select the video file');
+[filename, path] = uigetfile('*.tif','Select the video file');
 addpath(path);
 
+% Ask user the input the number of videos
+endvidnum = input('End video number =');
+
 % Get common parameters
+
+vidfps = 45/50;
+%{
 VidObj = VideoReader(filename);
 
 nVidFrame = VidObj.NumberOfFrames;
@@ -25,11 +30,11 @@ vidHeight = VidObj.Height;
 vidWidth = VidObj.Width;
 vidfps = VidObj.FrameRate;
 vidDuration = VidObj.Duration;
-
+%}
 %% Crop-out the ROI
 
 % Read out the first frame
-sampleframe = read(VidObj , 1);
+sampleframe = imread(fullfile(path,filename));
 
 % Only use the Red channel
 sampleframe = sampleframe(:,:,RGBchannel);
@@ -53,53 +58,93 @@ end
 % Input the threshold
 threshold = input('Threshold=');
 close(101)
-%% Load frames and adjust fps
-% Ajudt how many frames to skip during loading
-frames2skip=round(vidfps/targetfps);
 
-% Calculate how many frames to load
-nframe2load=length(firstframe2load : frames2skip : nVidFrame);
 
-% Prime the video stack
-Vidstack = uint8( zeros(cropindices(4), cropindices(3), nframe2load));
+%% Start batch processing
+Final_data = [];
 
-% Use progress bar if needed
-if quietmode==0
-    dispbar=waitbar(0,'Loading Data Video');
-end
-
-% Load it!
-for i = firstframe2load : frames2skip : nVidFrame
-    % Read out frame
-    Mov = read(VidObj , i);
+for j = str2double(filename(end-4)) : endvidnum
+    tic
     
-    % Discard the unchosen channels
-    Mov=Mov(:,:,RGBchannel);
+    %% Reconstitute filename
+    filename2 = [filename(1:end-5), num2str(j),'.tif'];
+    disp(['Processing Video: ', filename2])
     
-    % Get current frame
-    currentframe = Mov(cropindices(2):cropindices(2)+cropindices(4)-1,...
-    cropindices(1):cropindices(1)+cropindices(3)-1);
-    
-    % Load & apply threshold & filter by areas
-    Vidstack(:,:,(i - firstframe2load) / frames2skip + 1) = ...
-        largestarea(im2bw(currentframe,threshold));
+    %% Load frames and adjust fps
+    % Ajudt how many frames to skip during loading
+    frames2skip = 1; %round(vidfps/targetfps);
+
+    % Obtain the number of frames in the video
+    nVidFrame = length(imfinfo(fullfile(path,filename2)));
+
+    % Calculate how many frames to load
+    nframe2load = nVidFrame; %length(firstframe2load : frames2skip : nVidFrame);
+
+    % Prime the video stack
+    Vidstack = uint8( zeros(cropindices(4), cropindices(3), nframe2load));
+
+    % Use progress bar if needed
+    if quietmode==0
+        dispbar=waitbar(0,['Processing Video #', num2str(j)]);
+    end
+
+    % Load it!
+    for i = firstframe2load : frames2skip : nVidFrame
+        
+        % Read out frame
+        Mov = imread(fullfile(path,filename2),i);
+
+        % Discard the unchosen channels
+        % Mov=Mov(:,:,RGBchannel);
+
+        % Get current frame
+        currentframe = Mov(cropindices(2):cropindices(2)+cropindices(4)-1,...
+        cropindices(1):cropindices(1)+cropindices(3)-1);
+
+        % Load & apply threshold & filter by areas
+        Vidstack(:,:,(i - firstframe2load) / frames2skip + 1) = ...
+            largestarea(im2bw(currentframe,threshold));
+
+        if quietmode==0
+            % Preview, but slows down the processing
+            figure(102)
+            imshow(Vidstack(:,:,(i - firstframe2load) / frames2skip + 1),[]);
+
+            % Update the waitbar
+            waitbar(i/nVidFrame,dispbar)
+        end
+    end
 
     if quietmode==0
-        % Preview, but slows down the processing
-        imshow(Vidstack(:,:,(i - firstframe2load) / frames2skip + 1),[]);
-        
-        % Update the waitbar
-        waitbar(i/nVidFrame,dispbar)
+        close(102)
+        close(dispbar)
     end
+
+    %% Calculate pixel subtration
+    Pixeldiff = squeeze(sum(sum(abs(diff(Vidstack, 1, 3)), 1), 2));
+    
+    Final_data = [Final_data ; Pixeldiff]; %#ok<AGROW>
+    
+    % Make a plot
+    %{
+    if strcmp(filename,filename2)
+        plot(1/vidfps:1/vidfps:(nframe2load-1)/vidfps,Pixeldiff)
+        xlabel('Time(s)')
+        ylabel('Pixel Difference')
+    end
+    %}
+    
+    save(fullfile(path,'Processed data',[filename2(1:end-4),'.mat']))
+    toc
 end
 
-if quietmode==0
-    close(dispbar)
-end
-
-%% Calculate pixel subtration
-Pixeldiff = squeeze(sum(sum(abs(diff(Vidstack, 1, 3)), 1), 2));
-
-plot((1+1/targetfps):1/targetfps:nframe2load,Pixeldiff)
-xlabel('Time(s)')
+%% save and plot final data
+% Plot
+plot((1:length(Final_data))/vidfps/60, Final_data)
+xlabel('Time(min)')
 ylabel('Pixel Difference')
+
+% Save
+keep Final_data path
+save(fullfile(path,'Processed data','Finaldata.mat'))
+
