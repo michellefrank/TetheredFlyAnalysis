@@ -9,10 +9,10 @@ firstframe2load = 1;
 RGBchannel = 1;
 
 % Choose 1 if don't want to see the progress of processing
-quietmode = 0;
+quietmode = 1;
 
 % Choose 1 if using batch analysis
-batchmode = 1;
+%batchmode = 1;
 
 %% Load video
 % Specify video name and path
