@@ -11,9 +11,6 @@ RGBchannel = 1;
 % Choose 1 if don't want to see the progress of processing
 quietmode = 0;
 
-% Choose 1 if using batch analysis
-batchmode = 1;
-
 %% Load video
 % Specify video name and path
 [filename, path] = uigetfile('*.avi','Select the video file');
@@ -68,6 +65,8 @@ Vidstack = uint8( zeros(cropindices(4), cropindices(3), nframe2load));
 % Use progress bar if needed
 if quietmode==0
     dispbar=waitbar(0,'Loading Data Video');
+else
+    textprogressbar('Processing: ');
 end
 
 % Load it!
@@ -92,11 +91,15 @@ for i = firstframe2load : frames2skip : nVidFrame
         
         % Update the waitbar
         waitbar(i/nVidFrame,dispbar)
+    else
+        textprogressbar(i/(nVidFrame - firstframe2load)*100);
     end
 end
 
 if quietmode==0
     close(dispbar)
+else
+    textprogressbar('Done!');
 end
 
 %% Calculate pixel subtration
@@ -105,3 +108,6 @@ Pixeldiff = squeeze(sum(sum(abs(diff(Vidstack, 1, 3)), 1), 2));
 plot((1+1/targetfps):1/targetfps:nframe2load,Pixeldiff)
 xlabel('Time(s)')
 ylabel('Pixel Difference')
+
+% Save data
+save(fullfile(path,'Processed data',[filename(1:end-4),'.mat']))
