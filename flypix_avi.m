@@ -52,6 +52,15 @@ end
 % Input the threshold
 threshold = input('Threshold=');
 close(101)
+
+%% Remove the tethering bar
+figure(101)
+
+% Manually select bar ROI
+[~, cropindices_bar] = imcrop(sampleframe_cr);
+cropindices_bar = max(floor(cropindices_bar),1);
+close(101)
+
 %% Load frames and adjust fps
 % Ajudt how many frames to skip during loading
 frames2skip=round(vidfps/targetfps);
@@ -81,6 +90,10 @@ for i = firstframe2load : frames2skip : nVidFrame
     currentframe = Mov(cropindices(2):cropindices(2)+cropindices(4)-1,...
     cropindices(1):cropindices(1)+cropindices(3)-1);
     
+    % Remove the tethering bar
+    currentframe(cropindices_bar(2):cropindices_bar(2)+cropindices_bar(4)-1,...
+        cropindices_bar(1):cropindices_bar(1)+cropindices_bar(3)-1)=0;
+
     % Load & apply threshold & filter by areas
     Vidstack(:,:,(i - firstframe2load) / frames2skip + 1) = ...
         largestarea(im2bw(currentframe,threshold));
