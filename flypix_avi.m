@@ -11,6 +11,7 @@ RGBchannel = 1;
 % Choose 1 if don't want to see the progress of processing
 quietmode = 1;
 
+
 %% Load video
 % Specify video name and path
 [filename, path] = uigetfile('*.avi','Select the video file');
@@ -138,4 +139,5 @@ ylabel('Pixel Difference')
 savefig(gcf, fullfile(path, 'revised-processing-b', [filename(1:end-4), '.fig']));
 
 % Save data
-save(fullfile(path, 'revised-processing-b', [filename(1:end-4),'.mat']))
+
+save(fullfile(path,'Processed data',[filename(1:end-4),'.mat']))
