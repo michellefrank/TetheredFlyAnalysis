@@ -1,9 +1,9 @@
 %% Parameters
 % Define the threshold
-pixthresh = 500;
+pixthresh = 6;
 
 % Define minimal chain length
-min_chainlength = 100;
+min_chainlength = 180;
 
 % Deine the max number of entries tolerated by the program
 maxgap = 1;
@@ -13,7 +13,7 @@ fps = 1;
 
 %% Processing
 % Find the chains
-chainmat = chainfinder(Final_data <= pixthresh);
+chainmat = chainfinder(Pixeldiff <= pixthresh);
 
 % Tolerate gaps (may result in greater false positives)
 chainmat = chainconnector(chainmat,maxgap);
@@ -23,13 +23,13 @@ chainmat = chainmat(chainmat(:,2) >= min_chainlength,:);
 
 %% Plotting
 % Find out the number of frames
-nframes = length(Final_data);
+nframes = length(Pixeldiff);
 
 % Make the figure
 figure(101)
 set(101, 'Position', [50,50,1300,600], 'Color', [1 1 1])
 
-plot((1:nframes)/fps/60/60, Final_data, 'Color', [0 ,0.28, 0.94])
+plot((1:nframes)/fps/60/60, Pixeldiff, 'Color', [0 ,0.28, 0.94])
 
 xlabel('Time(hour)', 'FontSize', 15)
 ylabel('Pixel diff', 'FontSize', 15)
