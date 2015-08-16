@@ -22,6 +22,7 @@ endvidnum = input('End video number =');
 % Get common parameters
 
 vidfps = 45/50;
+
 %{
 VidObj = VideoReader(filename);
 
@@ -31,6 +32,7 @@ vidWidth = VidObj.Width;
 vidfps = VidObj.FrameRate;
 vidDuration = VidObj.Duration;
 %}
+
 %% Crop-out the ROI
 
 % Read out the first frame
