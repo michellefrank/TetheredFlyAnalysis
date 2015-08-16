@@ -9,13 +9,8 @@ firstframe2load = 1;
 RGBchannel = 1;
 
 % Choose 1 if don't want to see the progress of processing
-<<<<<<< HEAD
-
 quietmode = 1;
 
-=======
-quietmode = 1;
->>>>>>> origin/master
 
 %% Load video
 % Specify video name and path
@@ -144,10 +139,5 @@ ylabel('Pixel Difference')
 savefig(gcf, fullfile(path, 'revised-processing-b', [filename(1:end-4), '.fig']));
 
 % Save data
-<<<<<<< HEAD
 
 save(fullfile(path,'Processed data',[filename(1:end-4),'.mat']))
-
-=======
-save(fullfile(path, 'revised-processing-b', [filename(1:end-4),'.mat']))
->>>>>>> origin/master
