@@ -43,6 +43,5 @@ unjoined_chains = chainmat(conn_chains==0,:);
 % Combine joined and unjoined chains, and sort
 chainmat_c = sortrows([chainmat_c;unjoined_chains]);
 
-
 end
 

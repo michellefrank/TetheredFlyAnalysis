@@ -9,9 +9,13 @@ firstframe2load = 1;
 RGBchannel = 1;
 
 % Choose 1 if don't want to see the progress of processing
+<<<<<<< HEAD
 
 quietmode = 1;
 
+=======
+quietmode = 1;
+>>>>>>> origin/master
 
 %% Load video
 % Specify video name and path
@@ -57,10 +61,20 @@ close(101)
 
 %% Remove the tethering bar
 figure(101)
+set(101,'Name','Tethering bar')
 
 % Manually select bar ROI
 [~, cropindices_bar] = imcrop(sampleframe_cr);
 cropindices_bar = max(floor(cropindices_bar),1);
+close(101)
+
+%% Remove anything else
+figure(101)
+set(101,'Name','Anything else')
+
+% Manually select bar ROI
+[~, cropindices_any] = imcrop(sampleframe_cr);
+cropindices_any = max(floor(cropindices_any),1);
 close(101)
 
 %% Load frames and adjust fps
@@ -96,6 +110,10 @@ for i = firstframe2load : frames2skip : nVidFrame
     currentframe(cropindices_bar(2):cropindices_bar(2)+cropindices_bar(4)-1,...
         cropindices_bar(1):cropindices_bar(1)+cropindices_bar(3)-1)=0;
 
+    % Remove the anything else
+    currentframe(cropindices_any(2):cropindices_any(2)+cropindices_any(4)-1,...
+        cropindices_any(1):cropindices_any(1)+cropindices_any(3)-1)=0;
+    
     % Load & apply threshold & filter by areas
     Vidstack(:,:,(i - firstframe2load) / frames2skip + 1) = ...
         largestarea(im2bw(currentframe,threshold));
@@ -120,11 +138,16 @@ end
 %% Calculate pixel subtration
 Pixeldiff = squeeze(sum(sum(abs(diff(Vidstack, 1, 3)), 1), 2));
 
-plot((1+1/targetfps):1/targetfps:nframe2load,Pixeldiff)
-xlabel('Time(s)')
+plot(((1+1/targetfps):1/targetfps:nframe2load)/60/60,Pixeldiff)
+xlabel('Time(hr)')
 ylabel('Pixel Difference')
+savefig(gcf, fullfile(path, 'revised-processing-b', [filename(1:end-4), '.fig']));
 
 % Save data
+<<<<<<< HEAD
 
 save(fullfile(path,'Processed data',[filename(1:end-4),'.mat']))
 
+=======
+save(fullfile(path, 'revised-processing-b', [filename(1:end-4),'.mat']))
+>>>>>>> origin/master
