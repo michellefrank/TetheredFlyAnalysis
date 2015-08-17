@@ -5,8 +5,14 @@ ViewingFPS = 20;
 % Threshold for the intensity of the pixel subtraction
 pixthresh = 500;
 
+% Threshold for sleep duration (number of frames)
+sleep_thresh = 300;
+
 % Where the circle will be drawn if the pixel subtraction is subthreshold
 circle_position = [size(Vidstack,2) - 20, 20, 10]; %[x,y,rad]
+
+% Where to draw the counter for number of quiescent frames
+counter_pos = [10, size(Vidstack,1) - 25];
 
 %% Obstain start and end frames
 
@@ -19,6 +25,10 @@ newVidstack = Vidstack(:,:,startframe:endframe);
 
 textprogressbar('Processing: ');
 
+% initiate frame counter (to keep track of how many rest frames in a row
+% have gone by)
+rest_counter = 0;
+
 for i = startframe : endframe
     % Update progress bar
     textprogressbar((i-startframe)/(endframe-startframe)*100);
@@ -28,8 +38,18 @@ for i = startframe : endframe
     
     % Write a circle if below threshold
     if Pixeldiff(i-1) < pixthresh
-        tempim = insertShape(tempim, 'FilledCircle', circle_position, 'Color', [255 , 0, 0]);
+        rest_counter = rest_counter + 1;
+        if rest_counter >= sleep_thresh
+            tempim = insertShape(tempim, 'FilledCircle', circle_position, 'Color', [255, 0, 0]);
+        else
+            tempim = insertShape(tempim, 'FilledCircle', circle_position, 'Color', [100, 0, 0]);
+        end
+    else
+        rest_counter = 0;
     end
+    
+    % Insert a counter showing the number of frames below threshold
+    tempim = insertText(tempim, counter_pos, num2str(rest_counter));
     
     % Only use 1 channel from the RGB frame
     newVidstack(:,:,i-startframe+1) = tempim(:,:,1);
