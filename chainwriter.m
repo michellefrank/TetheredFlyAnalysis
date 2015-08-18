@@ -1,7 +1,6 @@
-function [ chainvec ] = chainwritter( size, chainmat )
-%chainwritter writes out a chain of 0 and 1 based on the given chain size
+function [ chainvec ] = chainwriter( size, chainmat )
+%chainwriter writes out a chain of 0 and 1 based on the given chain size
 %and chainmat
-%   [ chainvec ] = chainwritter( size, chainmat )
 
 % Prime the chain
 chainvec = zeros(size, 1);
