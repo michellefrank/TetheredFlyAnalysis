@@ -63,7 +63,7 @@ end
 hold off
 
 % Save the figure
-savefig(gcf, fullfile(path, [filename(1:end-4), '-rest_bouts.fig']));
+savefig(gcf, fullfile(path, [filename(1:end-4), '-sleep_bouts.fig']));
 
 %% Plot histogram of rest bout durations
 
@@ -74,7 +74,7 @@ chainmat2 = chainmat(chainmat(:,2) > 60,2);
 chainmat2 = chainmat2/60;
 
 % Plot the histogram of rest bout durations
-hist(chainmat2, 20);
+figure; hist(chainmat2, 20);
 set(gcf, 'Color', [1 1 1]);
 xlabel('Minutes', 'fontweight', 'bold');
 ylabel('Counts', 'fontweight', 'bold');
@@ -90,7 +90,7 @@ disp('Mean length of rest bouts (>1 min): ');
 disp(mean(chainmat2));
 
 disp('Number of sleep bouts (>5 min): ');
-disp(length(chainmat_trim));
+disp(size(chainmat_trim,1));
 
 disp('Mean length of sleep bouts (> 5 min): ');
 disp(mean(chainmat_trim(:,2))/60);

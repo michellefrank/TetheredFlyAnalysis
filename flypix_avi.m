@@ -14,7 +14,7 @@ quietmode = 1;
 
 %% Load video
 % Specify video name and path
-[filename, path] = uigetfile('*.avi','Select the video file');
+[filename, path] = uigetfile('R:\Michelle\Fly tethering\*.avi','Select the video file');
 addpath(path);
 
 % Get common parameters
@@ -136,8 +136,8 @@ Pixeldiff = squeeze(sum(sum(abs(diff(Vidstack, 1, 3)), 1), 2));
 plot(((1+1/targetfps):1/targetfps:nframe2load)/60/60,Pixeldiff)
 xlabel('Time(hr)')
 ylabel('Pixel Difference')
-savefig(gcf, fullfile(path, 'revised-processing-b', [filename(1:end-4), '.fig']));
+savefig(gcf, fullfile(path, [filename(1:end-4), '.fig']));
 
 % Save data
 
-save(fullfile(path,'Processed data',[filename(1:end-4),'.mat']))
+save(fullfile(path,[filename(1:end-4),'.mat']))
