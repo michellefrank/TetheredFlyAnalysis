@@ -9,7 +9,8 @@ pixthresh = 500;
 sleep_thresh = 300;
 
 % Where the circle will be drawn if the pixel subtraction is subthreshold
-circle_position = [size(Vidstack,2) - 20, 20, 10]; %[x,y,rad]
+circle_position1 = [size(Vidstack,2) - 20, 20, 8]; %[x,y,rad]
+circle_position2 = [size(Vidstack,2) - 20, 20, 15];
 
 % Where to draw the counter for number of quiescent frames
 counter_pos = [10, size(Vidstack,1) - 25];
@@ -21,6 +22,9 @@ startframe = input('Enter start frame =');
 endframe = input('Enter end frame =');
 
 %% Stamp in the pixel subtraction results
+% Write out the sleep chain
+sleepchain = chainwritter(chainmat);
+
 newVidstack = Vidstack(:,:,startframe:endframe);
 
 textprogressbar('Processing: ');
@@ -54,6 +58,7 @@ for i = startframe : endframe
     % Only use 1 channel from the RGB frame
     newVidstack(:,:,i-startframe+1) = tempim(:,:,1);
 end
+
 textprogressbar('Done!');
 
 %% Play the video
