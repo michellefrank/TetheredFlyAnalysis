@@ -74,8 +74,8 @@ chainmat2 = chainmat(chainmat(:,2) > 60,2);
 chainmat2 = chainmat2/60;
 
 % Plot the histogram of rest bout durations
-figure; hist(chainmat2, 20);
-set(gcf, 'Color', [1 1 1]);
+figure('Color', [1 1 1]); hist(chainmat2, 20);
+set(gcf, 'FaceColor', 'blue');
 xlabel('Minutes', 'fontweight', 'bold');
 ylabel('Counts', 'fontweight', 'bold');
 title('Rest bout durations', 'fontweight', 'bold');

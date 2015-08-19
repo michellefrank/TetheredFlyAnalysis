@@ -22,8 +22,6 @@ startframe = input('Enter start frame =');
 endframe = input('Enter end frame =');
 
 %% Stamp in the pixel subtraction results
-% Write out the sleep chain
-sleepchain = chainwritter(chainmat);
 
 newVidstack = Vidstack(:,:,startframe:endframe);
 
@@ -44,9 +42,9 @@ for i = startframe : endframe
     if Pixeldiff(i-1) < pixthresh
         rest_counter = rest_counter + 1;
         if rest_counter >= sleep_thresh
-            tempim = insertShape(tempim, 'FilledCircle', circle_position, 'Color', [255, 0, 0]);
+            tempim = insertShape(tempim, 'FilledCircle', circle_position2, 'Color', [255, 0, 0]);
         else
-            tempim = insertShape(tempim, 'FilledCircle', circle_position, 'Color', [100, 0, 0]);
+            tempim = insertShape(tempim, 'FilledCircle', circle_position1, 'Color', [100, 0, 0]);
         end
     else
         rest_counter = 0;
